@@ -1,2 +1,7 @@
+build/*
+dist/*
+MATIBIN_beta/*
 *.spec
 *.png
+*.txt
+*.rar
