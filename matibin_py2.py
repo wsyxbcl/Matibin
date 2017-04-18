@@ -6,6 +6,7 @@
 # the fucking Continuous distillation experiment.
 # Let's call it matibin(ma for McCabe, ti for Thiele and bin for 
 # respect to my roomate God Bin)
+# Time wasted on this: 1.5 hours(half hour for package stuff)
 # by Yunxuan Chai(yx_chai@whu.edu.cn) 2017.4.17
 
 import numpy as np
@@ -56,6 +57,8 @@ def draw_stair(p0, curve_y, line1, line2):
     global plate_num
     f = p0[1] * np.ones(1000)
     g = curve_y
+    # TODO
+    # This solution is less elegent, maybe there's better way
     cross_array = np.pad(np.diff(np.array(f > g).astype(int)), \
         (1,0), 'constant', constant_values = (0,))
     cross_index = np.where(cross_array != 0)[0][0]
@@ -77,7 +80,7 @@ def draw_stair(p0, curve_y, line1, line2):
     plate_num += 1
     return 1
 
-print "Matibin(v0.0.1(beta), Apr 17 2017) based on Python 3.5.1"
+print "Matibin(v0.0.2(beta), Apr 17 2017) based on Python 2.7"
 print "A open-source program to accomplish McCabe_Thiele method. See https://github.com/wsyxbcl/Matibin"
 print "Feel free to use and share,just do not blame me for any future problem"
 print "by wsyxbcl(yx_chai@whu.edu.cn)" 
@@ -135,7 +138,7 @@ plt.xlim(0, 1)
 plt.ylim(0, 1)
 plt.xlabel('x(mole fraction of EtOH in liquid phase)')
 plt.ylabel('y(mole fraction of EtOH in vapor phase)')
-plt.savefig(filename+'.png', figsize=(8, 10), dpi = 400, bbox_inches='tight')
+plt.savefig(filename+'.png', figsize=(8, 40), dpi = 400, bbox_inches='tight')
 print 'The result('+filename+'.png) is saved in '+current_dir
 plt.show()
 exit = raw_input("Type 'q' to quit.")
