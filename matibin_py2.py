@@ -96,8 +96,7 @@ else:
 x_w = float(raw_input("Enter the Bottoms composition(x_W), IN MOLE FRACTION!!!\nx_W = "))
 x_d = float(raw_input("Enter the Distillate composition(x_W), IN MOLE FRACTION!!!\nx_D = "))
 x_f = float(raw_input("Enter the Feed composition(x_W), IN MOLE FRACTION!!!\nx_F = "))
-delta_k = q / (q - 1)
-delta_b = x_f / (q - 1)
+
 eq_line_y = np.loadtxt(open("./data/eq_EtOH_data.csv", "rb"),\
                        delimiter=",", skiprows= 0)
 # Function of the eq line(if there is such function)
@@ -110,11 +109,18 @@ eq_line_y = np.loadtxt(open("./data/eq_EtOH_data.csv", "rb"),\
 rec_line_k = (1.0 * R) / (R + 1)
 rec_line_b = x_d / (R + 1)
 rec_line = Line(rec_line_k, rec_line_b)
+
+delta_k = q / (q - 1)
+delta_b = - x_f / (q - 1) # Bug fixed(by yx_chai 2017.4.19)
 q_line = Line(delta_k, delta_b)
 d = crossover(rec_line, q_line)
 # drop(d)
 c = np.array([x_w, x_w])
 # drop(c)
+if d[0] <= c[0]:
+    print "Error! Please check your q value. "
+    exit = raw_input("Type 'q' to quit.")
+    raise SystemExit('Error in line 146.')
 # draw(q_line.get_formula)
 str_line_k = (d[1] - c[1])/(d[0] - c[0])
 str_line_b = d[1] - str_line_k * d[0]
@@ -131,7 +137,7 @@ draw(ref_line.get_formula)
 plate_num = 0
 p2 = crossover(rec_line, ref_line)
 while(draw_stair(p2, eq_line_y, rec_line, str_line)):
-    pass   
+    pass
 plate_num -= 1
 print "Theoretical number of plates = %d"%plate_num
 plt.xlim(0, 1)
