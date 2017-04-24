@@ -64,7 +64,9 @@ def draw_stair(p0, curve_y, line1, line2):
         # TODO
         # Maybe fix it later. 2017.4.24(yx_chai)
         # This aims not to be triggered, just in case of an infinite loop.
-        print "Error. The point on rec_line is left to the eq_line."
+        # Think I figure it out: when x_d is large, rec_line crossover eq_line first,
+        # so there will be no p1 at all.
+        print "Error. Something wrong with your x_D, check the unit and make sure the calculation is right"
         exit = raw_input("Type 'q' to quit.")
         raise SystemExit('Error happens in line 63, that p1[0] < p0[0].')
     if p1[0] < c[0]:
@@ -122,7 +124,7 @@ d = crossover(rec_line, q_line)
 c = np.array([x_w, x_w])
 # drop(c)
 if d[0] <= c[0]:
-    print "Error! Please check your q value. "
+    print "Error! Please check your input values(pay attention to the unit and the meaning of x_W & x_D)."
     exit = raw_input("Type 'q' to quit.")
     raise SystemExit('Error in line 146.')
 # draw(q_line.get_formula)
