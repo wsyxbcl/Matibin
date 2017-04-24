@@ -33,7 +33,6 @@ def draw(formula, y = None):
     """
     x belongs to [x_start, x_end)
     """
-    global x_axis
     if y is None: # means formula exists
         y = formula(x_axis)
     plt.plot(x_axis, y, color = 'k')
@@ -52,17 +51,22 @@ def draw_stair(p0, curve_y, line1, line2):
     A bug still unfixed: the corner is not a corner actually
     """
     global p2
-    global x_axis
-    global d
     global plate_num
     f = p0[1] * np.ones(1000)
     g = curve_y
     # TODO
-    # This solution is less elegent, maybe there's better way
+    # This solution is less elegant, maybe there's better way
     cross_array = np.pad(np.diff(np.array(f > g).astype(int)), \
         (1,0), 'constant', constant_values = (0,))
     cross_index = np.where(cross_array != 0)[0][0]
     p1 = np.array([x_axis[cross_index], curve_y[cross_index]])
+    if p1[0] > p0[0]:
+        # TODO
+        # Maybe fix it later. 2017.4.24(yx_chai)
+        # This aims not to be triggered, just in case of an infinite loop.
+        print "Error. The point on rec_line is left to the eq_line."
+        exit = raw_input("Type 'q' to quit.")
+        raise SystemExit('Error happens in line 63, that p1[0] < p0[0].')
     if p1[0] < c[0]:
         plt.step([p0[0], p1[0]], [p1[1], p1[1]], \
                  color='k', linestyle='-', linewidth=1) 
@@ -87,19 +91,19 @@ print "by wsyxbcl(yx_chai@whu.edu.cn)"
 
 # Experiment results & some constants(e.g. the eq line)
 filename = raw_input("Enter a filename: ")
-R = float(raw_input("Enter the reflux ratio R(enter inf for infinite reflux(R = inf))\nR = "))
+R = float(raw_input("Enter the reflux ratio R(enter inf for infinite reflux(e.g. R = 4 or R = inf))\nR = "))
 if R > 99999:
     R = 99999
     q = 1.01 # just a random num, cause it's not important in such case
 else:
     q = float(raw_input("Enter the value of q, where q = (C_pm(t_BP - t_F))/r_m + 1\nq = "))
-x_w = float(raw_input("Enter the Bottoms composition(x_W), IN MOLE FRACTION!!!\nx_W = "))
+x_w = float(raw_input("Enter the Bottoms composition(x_W), IN MOLE FRACTION!!!(e.g. x_W = 0.007)\nx_W = "))
 x_d = float(raw_input("Enter the Distillate composition(x_W), IN MOLE FRACTION!!!\nx_D = "))
 x_f = float(raw_input("Enter the Feed composition(x_W), IN MOLE FRACTION!!!\nx_F = "))
 
 eq_line_y = np.loadtxt(open("./data/eq_EtOH_data.csv", "rb"),\
                        delimiter=",", skiprows= 0)
-# Function of the eq line(if there is such function)
+# Function of the eq_line(if there is such function)
 # def eq_line(x):
     # """
     # Function of the operating line
