@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import os
 current_dir = os.getcwd()
 # Initialization
-x_axis = np.arange(0, 1, 0.001)
+x_axis = np.arange(0, 1, 0.0001)
 
 
 class Line:
@@ -52,7 +52,7 @@ def draw_stair(p0, curve_y, line1, line2):
     """
     global p2
     global plate_num
-    f = p0[1] * np.ones(1000)
+    f = p0[1] * np.ones(10000)
     g = curve_y
     # TODO
     # This solution is less elegant, maybe there's better way
@@ -100,10 +100,16 @@ if R > 99999:
 else:
     q = float(raw_input("Enter the value of q, where q = (C_pm(t_BP - t_F))/r_m + 1\nq = "))
 x_w = float(raw_input("Enter the Bottoms composition(x_W), IN MOLE FRACTION!!!(e.g. x_W = 0.007)\nx_W = "))
+if x_w <= 0.0001:
+    print "Error. x_w is unreasonably small, please check."
+    exit = raw_input("Type 'q' to quit.")
+    raise SystemExit('Error happens in line 103, where x_w <= 0.0001.')
 x_d = float(raw_input("Enter the Distillate composition(x_W), IN MOLE FRACTION!!!\nx_D = "))
 x_f = float(raw_input("Enter the Feed composition(x_W), IN MOLE FRACTION!!!\nx_F = "))
 
-eq_line_y = np.loadtxt(open("./data/eq_EtOH_data.csv", "rb"),\
+# eq_line_y = np.loadtxt(open("./data/eq_EtOH_data.csv", "rb"),\
+                       # delimiter=",", skiprows= 0)
+eq_line_y = np.loadtxt(open("./data/eq_EtOH_data_10000.csv", "rb"),\
                        delimiter=",", skiprows= 0)
 # Function of the eq_line(if there is such function)
 # def eq_line(x):
