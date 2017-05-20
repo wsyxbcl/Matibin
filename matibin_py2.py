@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+import numpy as np
+import matplotlib.pyplot as plt
+import os
 
 # The program is a accomplish of so called McCabe–Thiele method
 # Just to deal with the meaningless data processing after
@@ -8,13 +11,6 @@
 # respect to my roomate God Bin)
 # Time wasted on this: 1.5 hours(half hour for package stuff)
 # by Yunxuan Chai(yx_chai@whu.edu.cn) 2017.4.17
-
-import numpy as np
-import matplotlib.pyplot as plt
-import os
-current_dir = os.getcwd()
-# Initialization
-x_axis = np.arange(0, 1, 0.0001)
 
 
 class Line:
@@ -29,6 +25,12 @@ class Line:
         return self.k * x + self.b
 
         
+class InputError(Exception):
+    pass
+
+class AccuracyError(InputError):
+    pass
+    
 def draw(formula, y = None):
     """
     x belongs to [x_start, x_end)
@@ -85,61 +87,77 @@ def draw_stair(p0, curve_y, line1, line2):
                  color='k', linestyle='-', linewidth=1)
     plate_num += 1
     return 1
-
+    
+# Initialization
+current_dir = os.getcwd()
+x_axis = np.arange(0, 1, 0.0001)
 print "Matibin(v0.0.2(beta), Apr 17 2017) based on Python 2.7"
 print "A open-source program to accomplish McCabe_Thiele method. See https://github.com/wsyxbcl/Matibin"
-print "Feel free to use and share,just do not blame me for any future problem"
+print "Feel free to use and share, just do not blame me for any future problem"
 print "by wsyxbcl(yx_chai@whu.edu.cn)" 
 
-# Experiment results & some constants(e.g. the eq line)
+# Experimental results & some constants(e.g. the eq line)
 filename = raw_input("Enter a filename: ")
-R = float(raw_input("Enter the reflux ratio R(enter inf for infinite reflux(e.g. R = 4 or R = inf))\nR = "))
-if R > 99999:
-    R = 99999
-    q = 1.01 # just a random num, cause it's not important in such case
-else:
-    q = float(raw_input("Enter the value of q, where q = (C_pm(t_BP - t_F))/r_m + 1\nq = "))
-x_w = float(raw_input("Enter the Bottoms composition(x_W), IN MOLE FRACTION!!!(e.g. x_W = 0.007)\nx_W = "))
-if x_w <= 0.0001:
-    print "Error. x_w is unreasonably small, please check."
-    exit = raw_input("Type 'q' to quit.")
-    raise SystemExit('Error happens in line 103, where x_w <= 0.0001.')
-x_d = float(raw_input("Enter the Distillate composition(x_W), IN MOLE FRACTION!!!\nx_D = "))
-x_f = float(raw_input("Enter the Feed composition(x_W), IN MOLE FRACTION!!!\nx_F = "))
+while True:
+    try:
+        eq_line_y = np.loadtxt(open("./data/eq_EtOH_data.csv", "rb"),\
+                           delimiter=",", skiprows= 0)   
+        R = float(raw_input("Enter the reflux ratio R(enter inf for infinite reflux(e.g. R = 4 or R = inf))\nR = "))
+        if R > 99999:
+            R = 99999
+            q = 1.01 # just a random num, cause it's not important in such case
+        else:
+            q = float(raw_input("Enter the value of q, where q = (C_pm(t_BP - t_F))/r_m + 1\nq = "))
+        x_w = float(raw_input("Enter the Bottoms composition(x_W), IN MOLE FRACTION!!!(e.g. x_W = 0.007)\nx_W = "))
+        if x_w <= 0.0001:
+            raise AccuracyError
+        x_d = float(raw_input("Enter the Distillate composition(x_W), IN MOLE FRACTION!!!\nx_D = "))
+        x_f = float(raw_input("Enter the Feed composition(x_W), IN MOLE FRACTION!!!\nx_F = "))         
+        rec_line_k = (1.0 * R) / (R + 1)
+        rec_line_b = x_d / (R + 1)
+        rec_line = Line(rec_line_k, rec_line_b)
 
-# eq_line_y = np.loadtxt(open("./data/eq_EtOH_data.csv", "rb"),\
-                       # delimiter=",", skiprows= 0)
-eq_line_y = np.loadtxt(open("./data/eq_EtOH_data_10000.csv", "rb"),\
-                       delimiter=",", skiprows= 0)
-# Function of the eq_line(if there is such function)
-# def eq_line(x):
-    # """
-    # Function of the operating line
-    # """
-    # return 2.46 * x/(1 + 1.46 * x)
-    
-rec_line_k = (1.0 * R) / (R + 1)
-rec_line_b = x_d / (R + 1)
-rec_line = Line(rec_line_k, rec_line_b)
-
-delta_k = q / (q - 1)
-delta_b = - x_f / (q - 1) # Bug fixed(by yx_chai 2017.4.19)
-q_line = Line(delta_k, delta_b)
-d = crossover(rec_line, q_line)
-# drop(d)
-c = np.array([x_w, x_w])
-# drop(c)
-if d[0] <= c[0]:
-    print "Error! Please check your input values(pay attention to the unit and the meaning of x_W & x_D)."
-    exit = raw_input("Type 'q' to quit.")
-    raise SystemExit('Error in line 146.')
+        delta_k = q / (q - 1)
+        delta_b = - x_f / (q - 1) # Bug fixed(by yx_chai 2017.4.19)
+        q_line = Line(delta_k, delta_b)
+        d = crossover(rec_line, q_line)
+        # drop(d)
+        c = np.array([x_w, x_w])
+        # drop(c)
+        if d[0] <= c[0]:
+            raise InputError
+        break        
+    except ValueError as e:
+        print "Value error: {0}".format(e)
+        print "ValueError occurs. Make sure that you enter pure numbers not strings."
+        print ""
+        print "Try again here"
+    except IOError as e:
+        print "IOError: {0}".format(e)
+        print "Make sure that you have eq_EtOH_data_10000.csv in the data directory."
+        exit = raw_input("Enter 'q' to quit.")
+        raise
+    except InputError:
+        print "Error!"
+        print "Please check your input values(pay attention to the unit and the meaning of x_W & x_D)."
+        print ""
+        print "Try again here"
+    except AccuracyError:
+        print "x_w is unreasonably small, which should be at least 0.0001 in this program"
+        print ""
+    except Exception as e:
+        print "Unexpected error: {0}".format(e)
+        print "First, make sure you have a correct input."
+        print "If you are sure that the input is correct. Reach me at yx_chai@whu.edu.cn."
+        exit = raw_input("Enter 'q' to quit.")  
+        raise
+               
 # draw(q_line.get_formula)
 str_line_k = (d[1] - c[1])/(d[0] - c[0])
 str_line_b = d[1] - str_line_k * d[0]
 str_line = Line(str_line_k, str_line_b)
 ref_line = Line(1, 0)
 # eq_line_y = eq_line(np.arange(0, 1, 0.001))
-
 draw(None, eq_line_y)
 draw(rec_line.get_formula)
 draw(str_line.get_formula)
