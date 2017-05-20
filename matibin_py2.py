@@ -8,7 +8,7 @@ import os
 # Just to deal with the meaningless data processing after
 # the fucking Continuous distillation experiment.
 # Let's call it matibin(ma for McCabe, ti for Thiele and bin for 
-# respect to my roommate God Bin)
+# respect to my roomate God Bin)
 # Time wasted on this: 1.5 hours(half an hour for package stuff)
 # by Yunxuan Chai(yx_chai@whu.edu.cn) 2017.4.17
 
@@ -66,10 +66,9 @@ def draw_stair(p0, curve_y, line1, line2):
         # TODO
         # Maybe fix it later. 2017.4.24(yx_chai)
         # This aims not to be triggered, just in case of an infinite loop.
-        # Think I figure it out: when x_d is large, rec_line crossover eq_line 
-        # first, so there will be no p1 at all.
-        print "Error. Something wrong with your x_D.
-        print "Please check the unit and make sure your calculation is right"
+        # Think I figure it out: when x_d is large, rec_line crossover eq_line first,
+        # so there will be no p1 at all.
+        print "Error. Something wrong with your x_D, check the unit and make sure the calculation is right"
         exit = raw_input("Type 'q' to quit.")
         raise SystemExit('Error happens in line 63, that p1[0] < p0[0].')
     if p1[0] < c[0]:
