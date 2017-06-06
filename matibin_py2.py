@@ -111,8 +111,8 @@ while True:
         x_w = float(raw_input("Enter the Bottoms composition(x_W), IN MOLE FRACTION!!!(e.g. x_W = 0.007)\nx_W = "))
         if x_w <= 0.0001:
             raise AccuracyError
-        x_d = float(raw_input("Enter the Distillate composition(x_W), IN MOLE FRACTION!!!\nx_D = "))
-        x_f = float(raw_input("Enter the Feed composition(x_W), IN MOLE FRACTION!!!\nx_F = "))         
+        x_d = float(raw_input("Enter the Distillate composition(x_D), IN MOLE FRACTION!!!\nx_D = "))
+        x_f = float(raw_input("Enter the Feed composition(x_F), IN MOLE FRACTION!!!\nx_F = "))         
         rec_line_k = (1.0 * R) / (R + 1)
         rec_line_b = x_d / (R + 1)
         rec_line = Line(rec_line_k, rec_line_b)
